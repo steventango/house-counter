@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 # Change these constants to adjust the selection heuristic.
 MIN_HOUSE_AREA = 80
-MAX_HOUSE_AREA = 500
+MAX_HOUSE_AREA = 700
 HOUSE_W_H_RATIO = 7
 
 # HSV ranges used for the mask
