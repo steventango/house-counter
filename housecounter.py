@@ -5,16 +5,16 @@ import numpy as np
 from tqdm import tqdm
 
 # Change these constants to adjust the selection heuristic.
-MIN_HOUSE_AREA = 20
-MAX_HOUSE_AREA = 1200
-HOUSE_W_H_RATIO = 10
+MIN_HOUSE_AREA = 80
+MAX_HOUSE_AREA = 1400
+HOUSE_W_H_RATIO = 7
 
 # HSV ranges used for the mask
-LOWER_MASK = np.array([0, 0, 0])
-UPPER_MASK = np.array([255, 10, 255])
+LOWER_MASK_1 = np.array([0, 40, 65])
+UPPER_MASK_1 = np.array([3, 255, 165])
 
-BLUR_RADIUS = 5
-assert BLUR_RADIUS % 2 == 1
+BLUR_RADIUS = 0
+assert BLUR_RADIUS == 0 or BLUR_RADIUS % 2 == 1 and BLUR_RADIUS > 1
 
 def select(contour):
     """Selection heuristic function for contours.
@@ -38,12 +38,13 @@ def select(contour):
 def main():
     img = cv.imread('map.png')
 
-    # Apply blur to reduce noise
-    img = cv.GaussianBlur(img, (BLUR_RADIUS, BLUR_RADIUS), 0)
-
     # Use HSV to mask out the background
     img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    mask = cv.inRange(img, LOWER_MASK, UPPER_MASK)
+    mask = cv.inRange(img, LOWER_MASK_1, UPPER_MASK_1)
+
+    # Apply blur to reduce noise
+    if BLUR_RADIUS:
+        mask = cv.GaussianBlur(mask, (BLUR_RADIUS, BLUR_RADIUS), 0)
 
     contours, hierarchy = cv.findContours(
         mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -81,6 +82,9 @@ def main():
     plt.title('Map')
     plt.suptitle(f'House Count: {len(house_contours)}')
     plt.savefig('out.png', dpi=300)
+
+    plt.imshow(mask)
+    plt.savefig('mask.png', dpi=300)
 
 
 if __name__ == '__main__':
