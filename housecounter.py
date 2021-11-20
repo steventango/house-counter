@@ -1,4 +1,5 @@
 import cv2 as cv
+from matplotlib import colors
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
@@ -37,12 +38,9 @@ def main():
     # Apply blur to reduce noise
     img = cv.GaussianBlur(img, (5, 5), 0)
 
-    # Convert to RGB
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-
     # Use HSV to mask out the background
-    imghsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    mask = cv.inRange(imghsv, LOWER_MASK, UPPER_MASK)
+    img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    mask = cv.inRange(img, LOWER_MASK, UPPER_MASK)
 
     contours, hierarchy = cv.findContours(
         mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -51,7 +49,8 @@ def main():
     house_contours = list(filtered_countours)
 
     # Randomly generate a color for each house
-    colors = list(np.random.random(size=(len(house_contours), 3)) * 256)
+    hues = np.random.random(size=(len(house_contours), 1)) * 256
+    colors = np.append(hues, np.full((len(house_contours), 2), 255), axis=1)
 
     for (i, c) in tqdm(enumerate(house_contours), total=len(house_contours)):
         M = cv.moments(c)
@@ -70,6 +69,9 @@ def main():
         )
 
         cv.drawContours(img, house_contours, i, colors[i], 1)
+
+    # Convert to RGB
+    img = cv.cvtColor(img, cv.COLOR_HSV2RGB)
 
     plt.imshow(img)
 
