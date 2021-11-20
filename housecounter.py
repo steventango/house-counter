@@ -13,6 +13,9 @@ HOUSE_W_H_RATIO = 10
 LOWER_MASK = np.array([0, 0, 0])
 UPPER_MASK = np.array([255, 10, 255])
 
+BLUR_RADIUS = 5
+assert BLUR_RADIUS % 2 == 1
+
 def select(contour):
     """Selection heuristic function for contours.
     Requires a contour to have a m00 moment > 0,
@@ -36,7 +39,7 @@ def main():
     img = cv.imread('map.png')
 
     # Apply blur to reduce noise
-    img = cv.GaussianBlur(img, (5, 5), 0)
+    img = cv.GaussianBlur(img, (BLUR_RADIUS, BLUR_RADIUS), 0)
 
     # Use HSV to mask out the background
     img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
