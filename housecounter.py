@@ -75,7 +75,7 @@ def main():
 
     plt.title('Map')
     plt.suptitle(f'House Count: {len(house_contours)}')
-    plt.savefig('out.png', dpi=1200)
+    plt.savefig('out.png', dpi=900)
 
 
 if __name__ == '__main__':
