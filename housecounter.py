@@ -53,10 +53,12 @@ def main():
     colors = np.append(hues, np.full((len(house_contours), 2), 255), axis=1)
 
     for (i, c) in tqdm(enumerate(house_contours), total=len(house_contours)):
+        cv.drawContours(img, house_contours, i, colors[i], 1)
+
         M = cv.moments(c)
         digit = str(i + 1)
         cx = int(M['m10'] / M['m00']) - 2 * len(digit)
-        cy = int(M['m01'] / M['m00'])
+        cy = int(M['m01'] / M['m00']) + 2
         cv.putText(
             img,
             text=digit,
@@ -67,8 +69,6 @@ def main():
             thickness=1,
             lineType=cv.LINE_AA
         )
-
-        cv.drawContours(img, house_contours, i, colors[i], 1)
 
     # Convert to RGB
     img = cv.cvtColor(img, cv.COLOR_HSV2RGB)
